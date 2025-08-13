@@ -1,0 +1,22 @@
+
+## Insights
+
+- USA is the most successful country by medal counts (unique medals considered).  
+- Male athletes historically have more medals than female athletes, though the gap has reduced in recent Olympics.  
+- Most medal-winning athletes are in the **20–30 age range**.  
+- Certain sports, like Athletics and Swimming, dominate the medal table.  
+- Medal trends have steadily increased over the years as more events and countries participate.
+
+---
+
+## In next part of this prject i will:
+
+- Explore Winter Olympics data.  
+- Perform **medal prediction** using basic machine learning.  
+- Add **interactive visualizations** with Plotly or Seaborn.  
+
+##  Author
+
+**Fawas Anayat**  
+- GitHub: [https://github.com/Fawas-Anayat]  
+- LinkedIn: []
