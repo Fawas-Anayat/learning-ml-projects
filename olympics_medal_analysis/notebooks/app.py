@@ -2,11 +2,40 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 
-st.title("Olympics Medal Analysis")
+st.set_page_config(
+    page_title="Olympics Medal Analysis",
+    page_icon="🏅",
+    layout="wide"  
+)
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-color: #f0f8ff; /* light blue */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+# Custom CSS for sidebar width
+st.markdown(
+    """
+    <style>
+    /* Reduce sidebar width */
+    [data-testid="stSidebar"] {
+        min-width: 200px;
+        max-width: 300px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-options = st.sidebar.selectbox(
+
+
+options = st.sidebar.radio(
     "Choose an option ",
-    ("Overall Analysis", "Country-wise Analysis", "Medals by Year","Medals by Gender")
+    ("Overall Analysis", "Country-wise Analysis", "Medals by Year","Medals by Gender","Medals Tally","Total Medals","About the developer")
 )
 
 # Load data
@@ -121,3 +150,59 @@ elif options == 'Medals by Gender':
         st.plotly_chart(fig)
     else:
         st.warning("No gender data available.")
+
+
+# ---- Medals Tally ----
+elif options == 'Medals Tally':
+    st.header("Medals Tally")
+    year = st.sidebar.selectbox("Select Year", sorted(df['Year'].unique(), reverse=True))
+    country = st.sidebar.selectbox("Select Country", sorted(df['NOC'].unique()))
+
+    # Filter data based on selections
+    filtered_data = df_medals[(df_medals['Year'] == year) & (df_medals['NOC'] == country)]
+
+    # Deduplicate by Games + Event + Medal (team medals only once)
+    filtered_unique_medals = filtered_data.drop_duplicates(subset=['Games', 'Event', 'Medal'])
+
+    st.write(f"### Medal Tally for {country} in {year}")
+    medal_tally = filtered_unique_medals['Medal'].value_counts().reset_index()
+    medal_tally.columns = ['Medal', 'Count']
+    st.dataframe(medal_tally)
+
+    if medal_tally.empty:
+        st.warning(f"No medals found for {country} in {year}.")
+
+# ---- Total Medals ----
+elif options == 'Total Medals':
+    st.header("Total Medals by Country")
+    total_medals_by_country = (
+        df_medals.groupby('NOC')
+        .size()
+        .reset_index(name='total_medals')
+        .sort_values(by='total_medals', ascending=False)
+    )
+
+    st.write("### Total Medals by Country")
+    st.dataframe(total_medals_by_country)
+
+    if not total_medals_by_country.empty:
+        fig = px.bar(
+            total_medals_by_country.head(20),
+            x='NOC',
+            y='total_medals',
+            title='Top 20 Countries by Total Medals',
+            labels={'NOC': 'Country', 'total_medals': 'Total Medals'}
+        )
+        st.plotly_chart(fig)
+    else:
+        st.warning("No medal data available.")
+
+# ---- About the developer ----
+elif options == 'About the developer':
+    st.header("About the Developer")
+    st.markdown("""
+    **Name:** Fawas Anayat   
+    **Role:** Data Scientist | Machine Learning Engineer | AI Enthusiast\n
+    **Contact** [Linkedin](linkedin.com/in/fawas-anayat-32b120261) \n
+    **Portfolio** [Github](https://github.com/Fawas-Anayat)""")
+    
